@@ -7,9 +7,12 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get("/test", (req, res) => {
-  res.send({
-    message: "Hello world!",
-  });
+  console.log(req.body);
+  res.send({ text: "GET Success!" });
+});
+
+app.post("/test", (req, res) => {
+  console.log(req.body.text);
 });
 
 app.listen(process.env.PORT || 3000);
