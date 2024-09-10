@@ -13,6 +13,7 @@ app.get("/test", (req, res) => {
 
 app.post("/test", (req, res) => {
   console.log(req.body.text);
+  res.status(200).json({ message: "POST Success" });
 });
 
 app.listen(process.env.PORT || 3000);

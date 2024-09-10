@@ -20,12 +20,20 @@ const testGetRequest = async () => {
 }
 
 const testPostRequest = async () => {
-  await fetch('http://localhost:3000/test', {
-    method: 'POST',
-    body: JSON.stringify({ text: 'POST Success!' }),
-    headers: { 'Content-Type': 'application/json' }
-  })
-  console.log('POST')
+  try {
+    const response = await fetch('http://localhost:3000/test', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'POST Success!' }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    if (!response.ok) {
+      throw new Error(`レスポンスステータス: ${response.status}`)
+    }
+    const json = await response.json()
+    console.log(json.message)
+  } catch (error) {
+    console.error(error)
+  }
 }
 </script>
 1
