@@ -10,7 +10,7 @@ interface Props {
   dating: number
   isToday: boolean
   dayType?: 'saturday' | 'holiday'
-  eventList: event[]
+  eventList?: event[]
   isFocused: boolean
 }
 
@@ -91,6 +91,11 @@ const computedThemeColor = (value: event['themeColor']) => {
   &__dating {
     font-size: 14px;
     font-weight: bold;
+    line-height: 1;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 50%;
     padding: 4px;
 
