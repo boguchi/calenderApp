@@ -27,7 +27,7 @@ export const Default: Story = {
   argTypes: {
     dayType: {
       control: 'select',
-      options: ['none', 'saturday', 'holiday']
+      options: [undefined, 'saturday', 'holiday']
     }
   },
   decorators: [() => ({ template: '<div style="height: 100vh; display: flex;"><story/></div>' })]

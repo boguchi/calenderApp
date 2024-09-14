@@ -24,9 +24,21 @@ const modifierCalenderItemClass = computed(() => {
 })
 const modifierDatingClass = computed(() => {
   let styleList = []
-  isToday ? styleList.push($style['CalenderItem__dating--today']) : undefined
-  dayType === 'saturday' ? styleList.push($style['CalenderItem__dating--saturday']) : undefined
-  dayType === 'holiday' ? styleList.push($style['CalenderItem__dating--holiday']) : undefined
+  if (isToday) {
+    if (dayType) {
+      dayType === 'saturday'
+        ? styleList.push($style['CalenderItem__dating--todayAndSaturday'])
+        : undefined
+      dayType === 'holiday'
+        ? styleList.push($style['CalenderItem__dating--todayAndHoliday'])
+        : undefined
+    } else {
+      isToday ? styleList.push($style['CalenderItem__dating--today']) : undefined
+    }
+  } else {
+    dayType === 'saturday' ? styleList.push($style['CalenderItem__dating--saturday']) : undefined
+    dayType === 'holiday' ? styleList.push($style['CalenderItem__dating--holiday']) : undefined
+  }
   return styleList
 })
 
@@ -93,6 +105,16 @@ const computedThemeColor = (value: event['themeColor']) => {
 
     &--holiday {
       color: #ff2121;
+    }
+
+    &--todayAndSaturday {
+      color: #fff;
+      background-color: #297bff;
+    }
+
+    &--todayAndHoliday {
+      color: #fff;
+      background-color: #ff2121;
     }
   }
 
