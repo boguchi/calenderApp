@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, useCssModule } from 'vue'
+import { ref, computed, onMounted, useCssModule } from 'vue'
 import CalenderItem from './CalenderItem.vue'
 import { getFirstDate, getLastDate, getFirstSunday, getItemQuantity } from '../utils/date'
 
@@ -17,8 +17,8 @@ const days = computed(() => {
   return ['日', '月', '火', '水', '木', '金', '土']
 })
 
+const eventList = ref<any>([])
 const calenderItemList = computed(() => {
-  console.log('computed')
   const firstDate = getFirstDate(year, monthIndex)
   const lastDate = getLastDate(year, monthIndex)
   const firstSunday = getFirstSunday(year, monthIndex)
@@ -36,18 +36,42 @@ const calenderItemList = computed(() => {
     } else {
       date = new Date(year, monthIndex, i - firstDate.getDay() + 1)
     }
+
+    const filteredEventList = eventList.value.filter((item: any) => {
+      return (
+        date.toDateString() === new Date(item.year, item.monthIndex, item.dating).toDateString()
+      )
+    })
+
     return {
       ...item,
       date: date,
       dating: date.getDate(),
       isToday: date.toDateString() === new Date().toDateString(),
-      dayType: date.getDay() === 0 ? 'holiday' : date.getDay() === 6 ? 'saturday' : undefined
+      dayType: date.getDay() === 0 ? 'holiday' : date.getDay() === 6 ? 'saturday' : undefined,
+      eventList: filteredEventList
     }
   })
 })
 
+const getEventList = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/calenderEventList')
+    if (!response.ok) {
+      throw new Error(`レスポンスステータス: ${response.status}`)
+    }
+    const json = await response.json()
+    eventList.value = JSON.parse(json)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+;(async () => {
+  await getEventList()
+})()
+
 onMounted(() => {
-  // console.log(calenderItemList.value[14])
   // console.log(new Date(2024, 8, 15).toDateString === new Date().toDateString)
 })
 </script>
