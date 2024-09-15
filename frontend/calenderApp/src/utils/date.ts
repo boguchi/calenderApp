@@ -5,8 +5,7 @@
  * @returns 引数の年月の初日（1日）のdateオブジェクト
  */
 export const getFirstDate = (year: number, monthIndex: number) => {
-  const month = monthIndex - 1
-  return new Date(year, month)
+  return new Date(year, monthIndex)
 }
 
 /**
@@ -16,7 +15,7 @@ export const getFirstDate = (year: number, monthIndex: number) => {
  * @returns 引数の年月の最終日のdateオブジェクト
  */
 export const getLastDate = (year: number, monthIndex: number) => {
-  const date = new Date(year, monthIndex)
+  const date = new Date(year, monthIndex + 1)
   date.setDate(date.getDate() - 1)
   return date
 }
