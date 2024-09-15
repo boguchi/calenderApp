@@ -18,6 +18,7 @@ const days = computed(() => {
 })
 
 const calenderItemList = computed(() => {
+  console.log('computed')
   const firstDate = getFirstDate(year, monthIndex)
   const lastDate = getLastDate(year, monthIndex)
   const firstSunday = getFirstSunday(year, monthIndex)
@@ -25,26 +26,29 @@ const calenderItemList = computed(() => {
   const calenderItemListBase = [...Array(itemQuantity).keys()].map((key) => {
     return { key } as any
   })
-  const previousMonthDays = firstDate.getDay() - firstSunday.getDay()
 
   return calenderItemListBase.map((item, i) => {
-    let dating
+    let date
     if (i < firstDate.getDay()) {
-      dating = firstSunday.getDate() + i
-    } else if (i >= previousMonthDays + lastDate.getDate()) {
-      dating = i - (previousMonthDays + lastDate.getDate()) + 1
+      date = new Date(year, monthIndex - 1, firstSunday.getDate() + i)
+    } else if (i >= firstDate.getDay() + lastDate.getDate()) {
+      date = new Date(year, monthIndex + 1, i - (firstDate.getDay() + lastDate.getDate()) + 1)
     } else {
-      dating = i - previousMonthDays + 1
+      date = new Date(year, monthIndex, i - firstDate.getDay() + 1)
     }
     return {
       ...item,
-      dating: dating
+      date: date,
+      dating: date.getDate(),
+      isToday: date.toDateString() === new Date().toDateString(),
+      dayType: date.getDay() === 0 ? 'holiday' : date.getDay() === 6 ? 'saturday' : undefined
     }
   })
 })
 
 onMounted(() => {
-  console.log(calenderItemList.value[15])
+  // console.log(calenderItemList.value[14])
+  // console.log(new Date(2024, 8, 15).toDateString === new Date().toDateString)
 })
 </script>
 
@@ -58,8 +62,8 @@ onMounted(() => {
         v-for="item in calenderItemList"
         :key="item.key"
         :dating="item.dating"
-        :isToday="true"
-        :dayType="undefined"
+        :isToday="item.isToday"
+        :dayType="item.dayType"
         :eventList="item.eventList"
         :isFocused="false"
         :class="$style.CalenderTable__calenderItem"
@@ -87,6 +91,10 @@ onMounted(() => {
   &__calenderItemWrap {
     display: grid;
     grid-template-columns: repeat(7, calc(100% / 7));
+  }
+
+  &__calenderItem {
+    flex: 1;
   }
 }
 </style>
