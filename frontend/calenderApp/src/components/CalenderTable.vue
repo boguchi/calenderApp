@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, useCssModule } from 'vue'
 import CalenderItem from './CalenderItem.vue'
+import { getFirstDate, getLastDate, getFirstSunday, getItemQuantity } from '../utils/date'
 
 interface Props {
   year: number
-  month: number
+  monthIndex: number
 }
 
-const { year, month } = defineProps<Props>()
+const { year, monthIndex } = defineProps<Props>()
 defineEmits([])
 
 const $style = useCssModule()
@@ -15,70 +16,34 @@ const $style = useCssModule()
 const days = computed(() => {
   return ['日', '月', '火', '水', '木', '金', '土']
 })
-const computedMonth = computed(() => {
-  return month - 1
-})
-// 月の初日を取得
-const firstDate = computed(() => {
-  return new Date(year, computedMonth.value)
-})
-// 月の最終日を取得
-const lastDate = computed(() => {
-  const date = new Date(year, month)
-  date.setDate(date.getDate() - 1)
-  return date
-})
-// 最初の日曜日を取得
-const computedFirstSunday = computed(() => {
-  const date = new Date(firstDate.value)
-  date.setDate(date.getDate() - firstDate.value.getDay())
-  return date
-})
-// 最後の土曜日を取得
-const computedLastSaturday = computed(() => {
-  const date = new Date(lastDate.value)
-  date.setDate(date.getDate() + (7 - lastDate.value.getDay()))
-  return date
-})
-// カレンダーの日付の数を算出
-const itemQuantity = computed(() => {
-  return (Number(computedLastSaturday.value) - Number(computedFirstSunday.value)) / 86400000
-})
 
-const calenderItemListBase = computed(() => {
-  return [...Array(itemQuantity.value).keys()].map((key) => {
+const calenderItemList = computed(() => {
+  const firstDate = getFirstDate(year, monthIndex)
+  const lastDate = getLastDate(year, monthIndex)
+  const firstSunday = getFirstSunday(year, monthIndex)
+  const itemQuantity = getItemQuantity(year, monthIndex)
+  const calenderItemListBase = [...Array(itemQuantity).keys()].map((key) => {
     return { key } as any
   })
-})
-const calenderItemList = computed(() => {
-  return calenderItemListBase.value.map((item, i) => {
-    const previousMonthDays = firstDate.value.getDay() - computedFirstSunday.value.getDay()
-    if (i < firstDate.value.getDay()) {
-      return {
-        ...item,
-        dating: computedFirstSunday.value.getDate() + i
-      }
-    } else if (i >= previousMonthDays + lastDate.value.getDate()) {
-      return {
-        ...item,
-        dating: i - (previousMonthDays + lastDate.value.getDate()) + 1
-      }
+  const previousMonthDays = firstDate.getDay() - firstSunday.getDay()
+
+  return calenderItemListBase.map((item, i) => {
+    let dating
+    if (i < firstDate.getDay()) {
+      dating = firstSunday.getDate() + i
+    } else if (i >= previousMonthDays + lastDate.getDate()) {
+      dating = i - (previousMonthDays + lastDate.getDate()) + 1
     } else {
-      return {
-        ...item,
-        dating: i - previousMonthDays + 1
-      }
+      dating = i - previousMonthDays + 1
+    }
+    return {
+      ...item,
+      dating: dating
     }
   })
 })
 
 onMounted(() => {
-  console.log(firstDate.value.getDay(), computedFirstSunday.value.getDate(), calenderItemList.value)
-
-  calenderItemList.value[15].eventList = [
-    { name: '旅行', themeColor: 'green' },
-    { name: '買い物', themeColor: 'blue' }
-  ]
   console.log(calenderItemList.value[15])
 })
 </script>

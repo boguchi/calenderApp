@@ -13,7 +13,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     year: 2024,
-    month: 10
+    monthIndex: 10
   },
   decorators: [
     () => ({
