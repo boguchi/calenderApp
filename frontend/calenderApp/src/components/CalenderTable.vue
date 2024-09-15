@@ -47,7 +47,7 @@ const itemQuantity = computed(() => {
 
 const calenderItemListBase = computed(() => {
   return [...Array(itemQuantity.value).keys()].map((key) => {
-    return { key }
+    return { key } as any
   })
 })
 const calenderItemList = computed(() => {
@@ -74,6 +74,12 @@ const calenderItemList = computed(() => {
 
 onMounted(() => {
   console.log(firstDate.value.getDay(), computedFirstSunday.value.getDate(), calenderItemList.value)
+
+  calenderItemList.value[15].eventList = [
+    { name: '旅行', themeColor: 'green' },
+    { name: '買い物', themeColor: 'blue' }
+  ]
+  console.log(calenderItemList.value[15])
 })
 </script>
 
@@ -89,7 +95,7 @@ onMounted(() => {
         :dating="item.dating"
         :isToday="true"
         :dayType="undefined"
-        :eventList="undefined"
+        :eventList="item.eventList"
         :isFocused="false"
         :class="$style.CalenderTable__calenderItem"
       />
