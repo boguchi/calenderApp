@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, useCssModule } from 'vue'
+import { ref, computed, onMounted, useCssModule, watch } from 'vue'
 import CalenderItem from './CalenderItem.vue'
 import { getFirstDate, getLastDate, getFirstSunday, getItemQuantity } from '../utils/date'
 
@@ -9,25 +9,27 @@ interface Props {
 }
 
 const { year, monthIndex } = defineProps<Props>()
-defineEmits([])
 
 const $style = useCssModule()
 
 const days = computed(() => {
   return ['日', '月', '火', '水', '木', '金', '土']
 })
+const calenderItemColumns = computed(() => {
+  return getItemQuantity(year, monthIndex) / 7
+})
 
-const eventList = ref<any>([])
-const calenderItemList = computed(() => {
+// 指定の年月のカレンダー情報を取得
+const calenderItemListBase = computed(() => {
   const firstDate = getFirstDate(year, monthIndex)
   const lastDate = getLastDate(year, monthIndex)
   const firstSunday = getFirstSunday(year, monthIndex)
   const itemQuantity = getItemQuantity(year, monthIndex)
-  const calenderItemListBase = [...Array(itemQuantity).keys()].map((key) => {
+  const listBase = [...Array(itemQuantity).keys()].map((key) => {
     return { key } as any
   })
 
-  return calenderItemListBase.map((item, i) => {
+  return listBase.map((item, i) => {
     let date
     if (i < firstDate.getDay()) {
       date = new Date(year, monthIndex - 1, firstSunday.getDate() + i)
@@ -36,20 +38,30 @@ const calenderItemList = computed(() => {
     } else {
       date = new Date(year, monthIndex, i - firstDate.getDay() + 1)
     }
-
-    const filteredEventList = eventList.value.filter((item: any) => {
-      return (
-        date.toDateString() === new Date(item.year, item.monthIndex, item.dating).toDateString()
-      )
-    })
-
     return {
       ...item,
       date: date,
       dating: date.getDate(),
       isToday: date.toDateString() === new Date().toDateString(),
-      dayType: date.getDay() === 0 ? 'holiday' : date.getDay() === 6 ? 'saturday' : undefined,
-      eventList: filteredEventList
+      dayType: date.getDay() === 0 ? 'holiday' : date.getDay() === 6 ? 'saturday' : undefined
+    }
+  })
+})
+
+const eventList = ref<any>([])
+// カレンダーにイベントやフォーカスの情報を追加
+const calenderItemList = computed(() => {
+  return calenderItemListBase.value.map((item) => {
+    const filteredEventList = eventList.value.filter((event: any) => {
+      return (
+        item.date.toDateString() ===
+        new Date(event.year, event.monthIndex, event.dating).toDateString()
+      )
+    })
+    return {
+      ...item,
+      eventList: filteredEventList,
+      isFocused: item.key === focusedItem.value
     }
   })
 })
@@ -67,12 +79,32 @@ const getEventList = async () => {
   }
 }
 
+const focusedItem = ref<number | undefined>()
+const setFocusedItem = () => {
+  const today = new Date()
+  if (today.getFullYear() === year && today.getMonth() === monthIndex) {
+    focusedItem.value = today.getDate() - 1
+  } else {
+    focusedItem.value = getFirstDate(year, monthIndex).getDay()
+  }
+}
+// 年月変更時にfocusedItemを初期化
+watch(() => [year, monthIndex], setFocusedItem)
+
+const calenderItemOnClick = (item: any) => {
+  if (item.isFocused) {
+    console.log('focused')
+  } else {
+    focusedItem.value = item.key
+  }
+}
+
 ;(async () => {
   await getEventList()
 })()
 
 onMounted(() => {
-  // console.log(new Date(2024, 8, 15).toDateString === new Date().toDateString)
+  setFocusedItem()
 })
 </script>
 
@@ -89,8 +121,9 @@ onMounted(() => {
         :isToday="item.isToday"
         :dayType="item.dayType"
         :eventList="item.eventList"
-        :isFocused="false"
+        :isFocused="item.isFocused"
         :class="$style.CalenderTable__calenderItem"
+        @calenderItemOnClick="calenderItemOnClick(item)"
       />
     </div>
   </div>
@@ -115,10 +148,15 @@ onMounted(() => {
   &__calenderItemWrap {
     display: grid;
     grid-template-columns: repeat(7, calc(100% / 7));
+    grid-template-rows: repeat(
+      v-bind(calenderItemColumns),
+      calc(100% / v-bind(calenderItemColumns))
+    );
   }
 
   &__calenderItem {
     flex: 1;
+    overflow: hidden;
   }
 }
 </style>

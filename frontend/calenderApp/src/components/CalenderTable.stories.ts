@@ -7,7 +7,8 @@ const mockData = [
   { year: 2024, monthIndex: 8, dating: 6, name: 'hoge', themeColor: 'green' },
   { year: 2024, monthIndex: 8, dating: 8, name: 'hoge', themeColor: 'blue' },
   { year: 2024, monthIndex: 8, dating: 14, name: 'hoge', themeColor: 'red' },
-  { year: 2024, monthIndex: 8, dating: 25, name: 'hoge', themeColor: 'blue' }
+  { year: 2024, monthIndex: 8, dating: 25, name: 'hoge', themeColor: 'blue' },
+  { year: 2024, monthIndex: 8, dating: 25, name: 'hoge', themeColor: 'green' }
 ]
 const jsonMockData = JSON.stringify(mockData)
 
