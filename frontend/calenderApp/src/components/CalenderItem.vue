@@ -10,11 +10,11 @@ interface Props {
   dating: number
   isToday: boolean
   dayType?: 'saturday' | 'holiday'
-  eventList: event[]
+  eventList?: event[]
   isFocused: boolean
 }
 
-const { dating, isToday, dayType, eventList, isFocused } = defineProps<Props>()
+const { dating, isToday, dayType, eventList, isFocused = false } = defineProps<Props>()
 defineEmits(['calenderItemOnClick', 'eventOnClick'])
 
 const $style = useCssModule()
@@ -89,8 +89,14 @@ const computedThemeColor = (value: event['themeColor']) => {
   }
 
   &__dating {
-    font-size: 14px;
+    font-family: monospace;
+    font-size: 10px;
     font-weight: bold;
+    line-height: 1;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 50%;
     padding: 4px;
 
@@ -121,9 +127,11 @@ const computedThemeColor = (value: event['themeColor']) => {
   &__contentsWrap {
     width: 100%;
     margin-top: 8px;
+    overflow: scroll;
   }
 
   &__event {
+    font-size: 10px;
     text-align: center;
     border-radius: 4px;
     color: #fff;

@@ -1,6 +1,9 @@
 import type { Preview } from '@storybook/vue3'
+import { initialize, mswLoader } from 'msw-storybook-addon'
 
 import 'ress'
+
+initialize()
 
 const preview: Preview = {
   parameters: {
@@ -11,7 +14,8 @@ const preview: Preview = {
       }
     },
     layout: 'fullscreen'
-  }
+  },
+  loaders: [mswLoader]
 }
 
 export default preview
