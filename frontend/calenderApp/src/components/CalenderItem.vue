@@ -127,6 +127,7 @@ const computedThemeColor = (value: event['themeColor']) => {
   &__contentsWrap {
     width: 100%;
     margin-top: 8px;
+    overflow: scroll;
   }
 
   &__event {

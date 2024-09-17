@@ -152,11 +152,11 @@ onMounted(() => {
       v-bind(calenderItemColumns),
       calc(100% / v-bind(calenderItemColumns))
     );
+    border-top: 1px solid #eee;
   }
 
   &__calenderItem {
     flex: 1;
-    overflow: hidden;
   }
 }
 </style>
