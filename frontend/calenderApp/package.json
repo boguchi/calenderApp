@@ -16,10 +16,12 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "pinia": "^2.1.7",
     "ress": "^5.0.2",
     "vue": "^3.5.4",
-    "vue-router": "^4.3.3"
+    "vue-router": "^4.3.3",
+    "vuetify": "^3.7.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.9.0",
