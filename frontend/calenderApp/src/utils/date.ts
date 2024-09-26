@@ -51,8 +51,8 @@ export const getLastSaturday = (year: number, monthIndex: number) => {
  * @returns 引数の年月の日付の数
  */
 export const getItemQuantity = (year: number, monthIndex: number) => {
-  return (
+  const quantity =
     (Number(getLastSaturday(year, monthIndex)) - Number(getFirstSunday(year, monthIndex))) /
     86400000
-  )
+  return quantity !== quantity ? 0 : quantity
 }
