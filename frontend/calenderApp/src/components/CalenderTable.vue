@@ -6,9 +6,10 @@ import { getFirstDate, getLastDate, getFirstSunday, getItemQuantity } from '../u
 interface Props {
   year: number
   monthIndex: number
+  eventList: any[]
 }
 
-const { year, monthIndex } = defineProps<Props>()
+const { year, monthIndex, eventList } = defineProps<Props>()
 
 const $style = useCssModule()
 
@@ -48,36 +49,26 @@ const calenderItemListBase = computed(() => {
   })
 })
 
-const eventList = ref<any>([])
 // カレンダーにイベントやフォーカスの情報を追加
 const calenderItemList = computed(() => {
-  return calenderItemListBase.value.map((item) => {
-    const filteredEventList = eventList.value.filter((event: any) => {
-      return (
-        item.date.toDateString() ===
-        new Date(event.year, event.monthIndex, event.dating).toDateString()
-      )
+  if (calenderItemListBase.value) {
+    return calenderItemListBase.value.map((item) => {
+      const filteredEventList = eventList.filter((event: any) => {
+        return (
+          item.date.toDateString() ===
+          new Date(event.year, event.monthIndex, event.dating).toDateString()
+        )
+      })
+      return {
+        ...item,
+        eventList: filteredEventList,
+        isFocused: item.key === focusedItem.value
+      }
     })
-    return {
-      ...item,
-      eventList: filteredEventList,
-      isFocused: item.key === focusedItem.value
-    }
-  })
-})
-
-const getEventList = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/calenderEventList')
-    if (!response.ok) {
-      throw new Error(`レスポンスステータス: ${response.status}`)
-    }
-    const json = await response.json()
-    eventList.value = JSON.parse(json)
-  } catch (error) {
-    console.error(error)
+  } else {
+    return []
   }
-}
+})
 
 const focusedItem = ref<number | undefined>()
 const setFocusedItem = () => {
@@ -98,10 +89,6 @@ const calenderItemOnClick = (item: any) => {
     focusedItem.value = item.key
   }
 }
-
-;(async () => {
-  await getEventList()
-})()
 
 onMounted(() => {
   setFocusedItem()
@@ -133,6 +120,7 @@ onMounted(() => {
 .CalenderTable {
   display: flex;
   flex-direction: column;
+  height: 100%;
 
   &__dayHeader {
     width: 100%;
@@ -146,6 +134,7 @@ onMounted(() => {
   }
 
   &__calenderItemWrap {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(7, calc(100% / 7));
     grid-template-rows: repeat(
