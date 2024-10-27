@@ -1,14 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import CalenderTable from './CalenderTable.vue'
+import { fn } from '@storybook/test'
 
-const eventList = [
-  { year: 2024, monthIndex: 8, dating: 1, name: 'hoge', themeColor: 'red' },
-  { year: 2024, monthIndex: 8, dating: 6, name: 'hoge', themeColor: 'green' },
-  { year: 2024, monthIndex: 8, dating: 8, name: 'hoge', themeColor: 'blue' },
-  { year: 2024, monthIndex: 8, dating: 14, name: 'hoge', themeColor: 'red' },
-  { year: 2024, monthIndex: 8, dating: 25, name: 'hoge', themeColor: 'blue' },
-  { year: 2024, monthIndex: 8, dating: 25, name: 'hoge', themeColor: 'green' }
-]
+import { mockEventList } from '../mock/eventList'
 
 const meta: Meta<typeof CalenderTable> = {
   title: 'Components/CalenderTable',
@@ -21,9 +15,10 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    year: 2024,
-    monthIndex: 8,
-    eventList: eventList
+    year: new Date().getFullYear(),
+    monthIndex: new Date().getMonth(),
+    eventList: mockEventList,
+    onCalenderItemOnClick: fn()
   },
   decorators: [
     () => ({

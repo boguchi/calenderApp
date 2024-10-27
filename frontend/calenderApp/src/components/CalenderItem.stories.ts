@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import { fn } from '@storybook/test'
 import CalenderItem from './CalenderItem.vue'
 
+import { mockEventList } from '../mock/eventList'
+
 const meta: Meta<typeof CalenderItem> = {
   title: 'Components/CalenderItem',
   component: CalenderItem
@@ -16,13 +18,9 @@ export const Default: Story = {
     dating: 15,
     isToday: false,
     dayType: undefined,
-    eventList: [
-      { name: '旅行', themeColor: 'green' },
-      { name: '買い物', themeColor: 'blue' }
-    ],
+    eventList: mockEventList,
     isFocused: false,
-    onCalenderItemOnClick: fn(),
-    onEventOnClick: fn()
+    onCalenderItemOnClick: fn()
   },
   argTypes: {
     dayType: {

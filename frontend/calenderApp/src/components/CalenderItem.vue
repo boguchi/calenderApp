@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { computed, useCssModule } from 'vue'
-
-type event = {
-  name: string
-  themeColor: 'red' | 'blue' | 'green'
-}
+import type { EventItemType } from '../utils/types/event'
 
 interface Props {
   dating: number
   isToday: boolean
   dayType?: 'saturday' | 'holiday'
-  eventList?: event[]
+  eventList?: EventItemType[]
   isFocused: boolean
 }
 
 const { dating, isToday, dayType, eventList, isFocused = false } = defineProps<Props>()
-defineEmits(['calenderItemOnClick', 'eventOnClick'])
+defineEmits(['calenderItemOnClick'])
 
 const $style = useCssModule()
 
@@ -42,7 +38,7 @@ const modifierDatingClass = computed(() => {
   return styleList
 })
 
-const computedThemeColor = (value: event['themeColor']) => {
+const computedLabelColor = (value: EventItemType['labelColor']) => {
   switch (value) {
     case 'red':
       return '#f66'
@@ -66,10 +62,9 @@ const computedThemeColor = (value: event['themeColor']) => {
         v-for="(event, index) in eventList"
         :key="index"
         :class="$style.CalenderItem__event"
-        :style="{ 'background-color': computedThemeColor(event.themeColor) }"
-        @click.stop="$emit('eventOnClick', index)"
+        :style="{ 'background-color': computedLabelColor(event.labelColor) }"
       >
-        {{ event.name }}
+        {{ event.title }}
       </div>
     </div>
   </div>

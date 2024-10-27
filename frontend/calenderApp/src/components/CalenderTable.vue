@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, useCssModule, watch } from 'vue'
+import type { EventItemType } from '../utils/types/event'
 import CalenderItem from './CalenderItem.vue'
 import { getFirstDate, getLastDate, getFirstSunday, getItemQuantity } from '../utils/date'
 
 interface Props {
   year: number
   monthIndex: number
-  eventList: any[]
+  eventList: EventItemType[]
 }
 
 const { year, monthIndex, eventList } = defineProps<Props>()
+const emit = defineEmits(['calenderItemOnClick'])
 
 const $style = useCssModule()
 
@@ -53,11 +55,8 @@ const calenderItemListBase = computed(() => {
 const calenderItemList = computed(() => {
   if (calenderItemListBase.value) {
     return calenderItemListBase.value.map((item) => {
-      const filteredEventList = eventList.filter((event: any) => {
-        return (
-          item.date.toDateString() ===
-          new Date(event.year, event.monthIndex, event.dating).toDateString()
-        )
+      const filteredEventList = eventList.filter((eventItem: any) => {
+        return item.date.toDateString() === new Date(eventItem.startDate).toDateString()
       })
       return {
         ...item,
@@ -72,9 +71,11 @@ const calenderItemList = computed(() => {
 
 const focusedItem = ref<number | undefined>()
 const setFocusedItem = () => {
-  const today = new Date()
-  if (today.getFullYear() === year && today.getMonth() === monthIndex) {
-    focusedItem.value = today.getDate() - 1
+  const todayIndex = calenderItemListBase.value.findIndex((item) => {
+    return item.isToday
+  })
+  if (todayIndex) {
+    focusedItem.value = todayIndex
   } else {
     focusedItem.value = getFirstDate(year, monthIndex).getDay()
   }
@@ -84,7 +85,7 @@ watch(() => [year, monthIndex], setFocusedItem)
 
 const calenderItemOnClick = (item: any) => {
   if (item.isFocused) {
-    console.log('focused')
+    emit('calenderItemOnClick', item)
   } else {
     focusedItem.value = item.key
   }
@@ -120,7 +121,6 @@ onMounted(() => {
 .CalenderTable {
   display: flex;
   flex-direction: column;
-  height: 100%;
 
   &__dayHeader {
     width: 100%;
