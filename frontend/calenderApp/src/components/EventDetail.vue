@@ -59,7 +59,7 @@ const labelColorText = computed(() => {
 })
 
 const computedStartDate = computed(() => {
-  const startDate = new Date(event.startDate)
+  const startDate = event.startDate
   return {
     year: startDate.getFullYear(),
     month: startDate.getMonth() + 1,
@@ -68,7 +68,7 @@ const computedStartDate = computed(() => {
   }
 })
 const computedEndDate = computed(() => {
-  const endDate = new Date(event.endDate)
+  const endDate = event.endDate
   return {
     year: endDate.getFullYear(),
     month: endDate.getMonth() + 1,
@@ -84,9 +84,7 @@ const computedEndDate = computed(() => {
       <v-btn icon="mdi-close" @click="closeEventDetail"></v-btn>
       <v-toolbar-title>イベントの詳細</v-toolbar-title>
       <v-toolbar-items :class="$style.EventDetail__editButton">
-        <CreateEventDialog :start-date="event.startDate" :end-date="event.endDate" :event="event">
-          編集
-        </CreateEventDialog>
+        <CreateEventDialog :event="event">編集</CreateEventDialog>
       </v-toolbar-items>
     </v-toolbar>
 

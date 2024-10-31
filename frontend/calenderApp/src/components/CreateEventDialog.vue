@@ -3,46 +3,36 @@ import { computed, ref, watch, useCssModule, onMounted } from 'vue'
 import type { EventItemType } from '../utils/types/event'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
 import ExpandItem from './ExpandItem.vue'
+import { useEventList } from '../stores/eventList'
+
+const store = useEventList()
 
 interface Props {
   event?: EventItemType
 }
 const { event } = defineProps<Props>()
 
-const $style = useCssModule()
+const cssModule = useCssModule
+const $style = cssModule()
 
 const dialog = ref(false)
 const isOneDay = ref(false)
 
-const eventTitle = ref()
-const eventStartDate = ref(new Date())
-const eventEndDate = ref(new Date())
-const eventStartTime = ref('0:00')
-const eventEndTime = ref('1:00')
-const eventLabelColor = ref('red')
-const eventMemo = ref()
-
+const editedEvent = ref()
 onMounted(() => {
   if (event) {
-    eventTitle.value = event.title
-    eventStartDate.value = event.startDate
-    eventEndDate.value = event.endDate
-    eventStartTime.value = event.startTime ? event.startTime : ''
-    eventEndTime.value = event.endTime ? event.endTime : ''
-    eventLabelColor.value = event.labelColor
-    eventMemo.value = event.memo
-    isOneDay.value = eventStartTime.value.length === 0 && eventEndTime.value.length === 0
+    editedEvent.value = event
   }
 })
 
-watch(
-  () => eventStartDate.value,
-  (newVal) => {
-    if (newVal > eventEndDate.value) {
-      eventEndDate.value = newVal
-    }
-  }
-)
+// watch(
+//   () => editedEvent.value.startDate,
+//   (newVal) => {
+//     if (newVal > editedEvent.value.endDate) {
+//       editedEvent.value.endDate = newVal
+//     }
+//   }
+// )
 
 const isShowVTimePickerStart = ref(false)
 const isShowVTimePickerEnd = ref(false)
@@ -75,13 +65,13 @@ const showPickers = (
 }
 
 const labelColorText = computed(() => {
-  if (eventLabelColor.value === 'blue') {
+  if (editedEvent.value.labelColor === 'blue') {
     return {
       label: 'ブルー',
       color: $style['CreateEventDialog__labelColorText--blue']
     }
   }
-  if (eventLabelColor.value === 'green') {
+  if (editedEvent.value.labelColor === 'green') {
     return {
       label: 'グリーン',
       color: $style['CreateEventDialog__labelColorText--green']
@@ -99,13 +89,7 @@ const showLabelColor = () => {
 }
 
 const submitEventDialog = () => {
-  console.log(eventTitle.value)
-  console.log(eventStartDate.value)
-  console.log(eventEndDate.value)
-  console.log(eventStartTime.value)
-  console.log(eventEndTime.value)
-  console.log(eventLabelColor.value)
-  console.log(eventMemo.value)
+  store.editEvent(editedEvent.value)
   dialog.value = false
 }
 </script>
@@ -132,7 +116,7 @@ const submitEventDialog = () => {
 
         <v-form @submit.prevent>
           <v-text-field
-            v-model="eventTitle"
+            v-model="editedEvent.title"
             label="タイトル"
             variant="underlined"
             clearable
@@ -153,28 +137,28 @@ const submitEventDialog = () => {
                 @click="showPickers('VDatePickerStart')"
                 :class="$style.CreateEventDialog__dateSelectorButton"
               >
-                {{ eventStartDate.getFullYear() }}年{{ eventStartDate.getMonth() + 1 }}月{{
-                  eventStartDate.getDate()
-                }}日
+                {{ editedEvent.startDate.getFullYear() }}年{{
+                  editedEvent.startDate.getMonth() + 1
+                }}月{{ editedEvent.startDate.getDate() }}日
               </button>
               <button
                 v-show="!isOneDay"
                 @click="showPickers('VTimePickerStart')"
                 :class="$style.CreateEventDialog__dateSelectorButton"
               >
-                {{ eventStartTime }}
+                {{ editedEvent.startTime }}
               </button>
             </div>
           </div>
           <ExpandItem :is-show="isShowVDatePickerStart">
             <v-date-picker
-              v-model="eventStartDate"
+              v-model="editedEvent.startDate"
               hide-header
               :class="$style.CreateEventDialog__vDatePicker"
             ></v-date-picker>
           </ExpandItem>
           <ExpandItem :is-show="isShowVTimePickerStart">
-            <v-time-picker v-model="eventStartTime"></v-time-picker>
+            <v-time-picker v-model="editedEvent.startTime"></v-time-picker>
           </ExpandItem>
 
           <div :class="$style.CreateEventDialog__dateSelector">
@@ -184,29 +168,29 @@ const submitEventDialog = () => {
                 @click="showPickers('VDatePickerEnd')"
                 :class="$style.CreateEventDialog__dateSelectorButton"
               >
-                {{ eventEndDate.getFullYear() }}年{{ eventEndDate.getMonth() + 1 }}月{{
-                  eventEndDate.getDate()
-                }}日
+                {{ editedEvent.endDate.getFullYear() }}年{{
+                  editedEvent.endDate.getMonth() + 1
+                }}月{{ editedEvent.endDate.getDate() }}日
               </button>
               <button
                 v-show="!isOneDay"
                 @click="showPickers('VTimePickerEnd')"
                 :class="$style.CreateEventDialog__dateSelectorButton"
               >
-                {{ eventEndTime }}
+                {{ editedEvent.endTime }}
               </button>
             </div>
           </div>
           <ExpandItem :is-show="isShowVDatePickerEnd">
             <v-date-picker
-              v-model="eventEndDate"
+              v-model="editedEvent.endDate"
               hide-header
               :class="$style.CreateEventDialog__vDatePicker"
             ></v-date-picker>
           </ExpandItem>
           <ExpandItem :is-show="isShowVTimePickerEnd">
             <v-time-picker
-              v-model="eventEndTime"
+              v-model="editedEvent.endTime"
               :class="$style.CreateEventDialog__vTimePicker"
             ></v-time-picker>
           </ExpandItem>
@@ -218,7 +202,10 @@ const submitEventDialog = () => {
             </p>
           </button>
           <ExpandItem :is-show="isShowLabelColor">
-            <v-radio-group v-model="eventLabelColor" :class="$style.CreateEventDialog__vRadioGroup">
+            <v-radio-group
+              v-model="editedEvent.labelColor"
+              :class="$style.CreateEventDialog__vRadioGroup"
+            >
               <v-radio color="#f66" label="レッド" value="red"></v-radio>
               <v-radio color="#668aff" label="ブルー" value="blue"></v-radio>
               <v-radio color="#66ffab" label="グリーン" value="green"></v-radio>
@@ -226,7 +213,7 @@ const submitEventDialog = () => {
           </ExpandItem>
 
           <v-textarea
-            v-model="eventMemo"
+            v-model="editedEvent.memo"
             label="メモ"
             variant="outlined"
             :class="$style.CreateEventDialog__vTextArea"

@@ -8,6 +8,9 @@ import EventItem from '../components/EventItem.vue'
 import EventDetail from '../components/EventDetail.vue'
 
 import { getEventList } from '../utils/api'
+import { useEventList } from '../stores/eventList'
+
+const store = useEventList()
 
 const selectedYear = ref()
 const thisYear = computed(() => {
@@ -39,9 +42,12 @@ const monthList = computed(() => {
   return monthList
 })
 
-const eventList = ref([])
+const eventList = computed(() => {
+  return store.eventList
+})
 ;(async () => {
-  eventList.value = await getEventList()
+  const fetchedEventList = await getEventList()
+  store.addEventList(fetchedEventList)
 })()
 
 const isDetailShown = ref(false)
