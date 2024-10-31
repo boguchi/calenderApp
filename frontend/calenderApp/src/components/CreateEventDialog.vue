@@ -22,6 +22,7 @@ const editedEvent = ref()
 onMounted(() => {
   if (event) {
     editedEvent.value = event
+    isOneDay.value = !editedEvent.value.startTime || !editedEvent.value.endTime
   }
 })
 
