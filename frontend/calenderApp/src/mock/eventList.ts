@@ -6,36 +6,42 @@ const thisMonthIndex = today.getMonth()
 
 export const mockEventList: EventItemType[] = [
   {
+    id: '1',
     title: 'hoge',
     startDate: new Date(thisYear, thisMonthIndex, 1),
     endDate: new Date(),
     labelColor: 'red'
   },
   {
+    id: '2',
     title: 'hoge',
     startDate: new Date(thisYear, thisMonthIndex, 8),
     endDate: new Date(),
     labelColor: 'green'
   },
   {
+    id: '3',
     title: 'hoge',
     startDate: new Date(thisYear, thisMonthIndex, 13),
     endDate: new Date(),
     labelColor: 'blue'
   },
   {
+    id: '4',
     title: 'hoge',
     startDate: new Date(thisYear, thisMonthIndex, 19),
     endDate: new Date(),
     labelColor: 'blue'
   },
   {
+    id: '5',
     title: 'hoge',
     startDate: new Date(thisYear, thisMonthIndex, 19),
     endDate: new Date(),
     labelColor: 'green'
   },
   {
+    id: '6',
     title: 'hoge',
     startDate: new Date(thisYear, thisMonthIndex, 25),
     endDate: new Date(),

@@ -1,4 +1,5 @@
 export type EventItemType = {
+  id: string
   title: string
   startDate: Date
   endDate: Date
