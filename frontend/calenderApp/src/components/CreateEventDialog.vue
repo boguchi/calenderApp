@@ -27,6 +27,19 @@ onMounted(() => {
 })
 
 watch(
+  () => isOneDay.value,
+  (newVal) => {
+    if (newVal) {
+      editedEvent.value.startTime = ''
+      editedEvent.value.endTime = ''
+    } else {
+      editedEvent.value.startTime = '0:00'
+      editedEvent.value.endTime = '1:00'
+    }
+  }
+)
+
+watch(
   () => editedEvent.value,
   (newVal) => {
     if (newVal > editedEvent.value.endDate) {
