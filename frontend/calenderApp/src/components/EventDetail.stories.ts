@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/vue3'
 import EventDetail from './EventDetail.vue'
+import { mockEventList } from '../mock/eventList'
 
 const meta: Meta<typeof EventDetail> = {
   title: 'Components/EventDetail',
@@ -18,14 +19,6 @@ export const Default: Story = {
     `
   }),
   args: {
-    event: {
-      title: 'タイトル',
-      startDate: new Date(),
-      endDate: new Date(),
-      // startTime?: string,
-      // endTime?: string,
-      labelColor: 'red',
-      memo: 'メモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモメモ'
-    }
+    event: mockEventList[0]
   }
 }

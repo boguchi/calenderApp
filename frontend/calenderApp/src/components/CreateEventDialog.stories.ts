@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { type Meta, type StoryObj } from '@storybook/vue3'
 import { userEvent, within } from '@storybook/test'
 import CreateEventDialog from './CreateEventDialog.vue'
+import { mockEventList } from '../mock/eventList'
 
 const meta: Meta<typeof CreateEventDialog> = {
   title: 'Components/CreateEventDialog',
@@ -25,7 +26,9 @@ export const Default: Story = {
     </CreateEventDialog>
     `
   }),
-  args: {},
+  args: {
+    event: mockEventList[0]
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const trigger = canvas.getByText('open dialog')
