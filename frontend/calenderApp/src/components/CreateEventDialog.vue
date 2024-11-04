@@ -41,7 +41,7 @@ watch(
 )
 
 watch(
-  () => editedEvent.value,
+  () => editedEvent.value?.startDate,
   (newVal) => {
     if (newVal > editedEvent.value.endDate) {
       editedEvent.value.endDate = newVal
