@@ -26,14 +26,14 @@ onMounted(() => {
   }
 })
 
-// watch(
-//   () => editedEvent.value.startDate,
-//   (newVal) => {
-//     if (newVal > editedEvent.value.endDate) {
-//       editedEvent.value.endDate = newVal
-//     }
-//   }
-// )
+watch(
+  () => editedEvent.value,
+  (newVal) => {
+    if (newVal > editedEvent.value.endDate) {
+      editedEvent.value.endDate = newVal
+    }
+  }
+)
 
 const isShowVTimePickerStart = ref(false)
 const isShowVTimePickerEnd = ref(false)
