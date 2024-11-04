@@ -84,7 +84,9 @@ const computedEndDate = computed(() => {
       <v-btn icon="mdi-close" @click="closeEventDetail"></v-btn>
       <v-toolbar-title>イベントの詳細</v-toolbar-title>
       <v-toolbar-items :class="$style.EventDetail__editButton">
-        <CreateEventDialog :event="event">編集</CreateEventDialog>
+        <CreateEventDialog :event="event" @submitEventDialog="closeEventDetail">
+          編集
+        </CreateEventDialog>
       </v-toolbar-items>
     </v-toolbar>
 

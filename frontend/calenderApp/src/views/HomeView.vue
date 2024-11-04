@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import SelectBox from '../components/SelectBox.vue'
 import CalenderTable from '../components/CalenderTable.vue'
@@ -7,6 +7,7 @@ import ExpandItem from '../components/ExpandItem.vue'
 import EventItem from '../components/EventItem.vue'
 import EventDetail from '../components/EventDetail.vue'
 
+import type { EventItemType } from '../utils/types/event'
 import { getEventList } from '../utils/api'
 import { useEventList } from '../stores/eventList'
 
@@ -42,12 +43,11 @@ const monthList = computed(() => {
   return monthList
 })
 
-const eventList = computed(() => {
-  return store.eventList
-})
+const eventList = ref<EventItemType[]>([])
 ;(async () => {
   const fetchedEventList = await getEventList()
   store.addEventList(fetchedEventList)
+  eventList.value = store.eventList
 })()
 
 const isDetailShown = ref(false)
@@ -69,8 +69,16 @@ const onClickEventItem = (value: any) => {
 }
 
 const closeEventDetail = () => {
+  isDetailShown.value = false
   isShowEventDetail.value = false
 }
+
+watch(
+  () => isShowEventDetail.value,
+  () => {
+    eventList.value = store.eventList
+  }
+)
 </script>
 
 <template>

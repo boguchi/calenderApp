@@ -6,6 +6,7 @@ import ExpandItem from './ExpandItem.vue'
 import { useEventList } from '../stores/eventList'
 
 const store = useEventList()
+const emit = defineEmits(['submitEventDialog'])
 
 interface Props {
   event?: EventItemType
@@ -21,7 +22,7 @@ const isOneDay = ref(false)
 const editedEvent = ref()
 onMounted(() => {
   if (event) {
-    editedEvent.value = event
+    editedEvent.value = { ...event }
     isOneDay.value = !editedEvent.value.startTime || !editedEvent.value.endTime
   }
 })
@@ -104,6 +105,7 @@ const showLabelColor = () => {
 
 const submitEventDialog = () => {
   store.editEvent(editedEvent.value)
+  emit('submitEventDialog')
   dialog.value = false
 }
 </script>
