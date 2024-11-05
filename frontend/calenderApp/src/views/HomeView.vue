@@ -244,10 +244,6 @@ const submitEventDialog = () => {
     border-bottom: 1px solid #e9e9e9;
   }
 
-  &__newEventValueWrap {
-    padding: 0 16px;
-  }
-
   &__newEventValue {
     display: flex;
     flex-direction: column;
