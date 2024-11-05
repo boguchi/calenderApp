@@ -22,6 +22,9 @@ export const useEventList = defineStore('eventList', () => {
       if (event.id === value.id) eventList.value[index] = value
     })
   }
+  const addNewEvent = (value: EventItemType) => {
+    eventList.value.push(value)
+  }
 
-  return { eventList, addEventList, editEvent }
+  return { eventList, addEventList, editEvent, addNewEvent }
 })

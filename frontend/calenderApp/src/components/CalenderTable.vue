@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { year, monthIndex, eventList } = defineProps<Props>()
-const emit = defineEmits(['calenderItemOnClick'])
+const emit = defineEmits(['calenderItemOnClick', 'calenderItemOnFocused'])
 
 const $style = useCssModule()
 
@@ -87,6 +87,7 @@ const calenderItemOnClick = (item: any) => {
   if (item.isFocused) {
     emit('calenderItemOnClick', item)
   } else {
+    emit('calenderItemOnFocused', item)
     focusedItem.value = item.key
   }
 }

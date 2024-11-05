@@ -10,8 +10,9 @@ const emit = defineEmits(['submitEventDialog'])
 
 interface Props {
   event?: EventItemType
+  newEventDate?: Date
 }
-const { event } = defineProps<Props>()
+const { event, newEventDate } = defineProps<Props>()
 
 const cssModule = useCssModule
 const $style = cssModule()
@@ -20,12 +21,36 @@ const dialog = ref(false)
 const isOneDay = ref(false)
 
 const editedEvent = ref()
+const presetData = computed(() => {
+  return {
+    title: '',
+    startDate: new Date(),
+    endDate: new Date(),
+    labelColor: 'red'
+  }
+})
 onMounted(() => {
   if (event) {
     editedEvent.value = { ...event }
     isOneDay.value = !editedEvent.value.startTime || !editedEvent.value.endTime
+  } else {
+    editedEvent.value = presetData.value
+    isOneDay.value = true
   }
 })
+
+watch(
+  () => dialog.value,
+  (newVal) => {
+    if (newVal && newEventDate) {
+      editedEvent.value.startDate = newEventDate
+      editedEvent.value.endDate = newEventDate
+    }
+    if (!newVal) {
+      editedEvent.value = presetData.value
+    }
+  }
+)
 
 watch(
   () => isOneDay.value,
@@ -104,14 +129,20 @@ const showLabelColor = () => {
 }
 
 const submitEventDialog = () => {
-  store.editEvent(editedEvent.value)
+  if (event) {
+    store.editEvent(editedEvent.value)
+  } else {
+    const addData = { ...editedEvent.value }
+    store.addNewEvent(addData)
+  }
+  isShowLabelColor.value = false
   emit('submitEventDialog')
   dialog.value = false
 }
 </script>
 
 <template>
-  <div class="text-center pa-4" :class="$style.CreateEventDialog">
+  <div class="text-center" :class="$style.CreateEventDialog">
     <v-dialog v-model="dialog" transition="dialog-bottom-transition" fullscreen>
       <template v-slot:activator="{ props: activatorProps }">
         <div v-bind="activatorProps" :class="$style.CreateEventDialog__activator">

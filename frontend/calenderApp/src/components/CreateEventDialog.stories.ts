@@ -35,3 +35,26 @@ export const Default: Story = {
     await userEvent.click(trigger)
   }
 }
+
+export const 新規作成: Story = {
+  render: (args) => ({
+    setup() {
+      const selectedValue = ref()
+      return { args, selectedValue }
+    },
+    components: { CreateEventDialog },
+    template: `
+    <CreateEventDialog v-model="selectedValue">
+      open dialog
+    </CreateEventDialog>
+    `
+  }),
+  args: {
+    newEventDate: new Date()
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const trigger = canvas.getByText('open dialog')
+    await userEvent.click(trigger)
+  }
+}

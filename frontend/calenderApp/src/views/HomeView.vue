@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue'
 
 import SelectBox from '../components/SelectBox.vue'
 import CalenderTable from '../components/CalenderTable.vue'
+import CreateEventDialog from '../components/CreateEventDialog.vue'
 import ExpandItem from '../components/ExpandItem.vue'
 import EventItem from '../components/EventItem.vue'
 import EventDetail from '../components/EventDetail.vue'
@@ -79,6 +80,16 @@ watch(
     eventList.value = store.eventList
   }
 )
+
+const focusedDate = ref(new Date())
+const calenderItemOnFocused = (value: any) => {
+  focusedDate.value = value.date
+}
+
+const submitEventDialog = () => {
+  eventList.value = store.eventList
+  isDetailShown.value = false
+}
 </script>
 
 <template>
@@ -134,6 +145,7 @@ watch(
             :event-list="eventList"
             :class="$style.HomeView__calenderTable"
             @calenderItemOnClick="openDetail"
+            @calenderItemOnFocused="calenderItemOnFocused"
           />
           <ExpandItem :is-show="isDetailShown">
             <div :class="$style.HomeView__detail">
@@ -144,6 +156,25 @@ watch(
         </div>
       </div>
     </Transition>
+
+    <v-bottom-navigation grow>
+      <v-btn>
+        <v-icon>mdi-home</v-icon>
+        <span>Home</span>
+      </v-btn>
+      <v-btn>
+        <CreateEventDialog :newEventDate="focusedDate" @submitEventDialog="submitEventDialog">
+          <div :class="$style.HomeView__newEventValue">
+            <v-icon>mdi-calendar-plus</v-icon>
+            <span>New Event</span>
+          </div>
+        </CreateEventDialog>
+      </v-btn>
+      <v-btn>
+        <v-icon>mdi-menu</v-icon>
+        <span>Menu</span>
+      </v-btn>
+    </v-bottom-navigation>
   </v-main>
 </template>
 
@@ -211,6 +242,16 @@ watch(
     width: 100%;
     background-color: #f6f6f6;
     border-bottom: 1px solid #e9e9e9;
+  }
+
+  &__newEventValueWrap {
+    padding: 0 16px;
+  }
+
+  &__newEventValue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 </style>
