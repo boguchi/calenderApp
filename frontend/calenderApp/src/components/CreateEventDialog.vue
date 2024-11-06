@@ -128,16 +128,22 @@ const showLabelColor = () => {
   isShowLabelColor.value = !isShowLabelColor.value
 }
 
+const snackbar = ref(false)
+
 const submitEventDialog = () => {
-  if (event) {
-    store.editEvent(editedEvent.value)
+  if (!editedEvent.value.title) {
+    snackbar.value = true
   } else {
-    const addData = { ...editedEvent.value }
-    store.addNewEvent(addData)
+    if (event) {
+      store.editEvent(editedEvent.value)
+    } else {
+      const addData = { ...editedEvent.value }
+      store.addNewEvent(addData)
+    }
+    isShowLabelColor.value = false
+    emit('submitEventDialog')
+    dialog.value = false
   }
-  isShowLabelColor.value = false
-  emit('submitEventDialog')
-  dialog.value = false
 }
 </script>
 
@@ -268,6 +274,15 @@ const submitEventDialog = () => {
         </v-form>
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="1000"
+      location="center"
+      color="#fff"
+      :class="$style.CreateEventDialog__vSnackbar"
+    >
+      <p :class="$style.CreateEventDialog__snackbar">タイトルが入力されていません</p>
+    </v-snackbar>
   </div>
 </template>
 
@@ -346,6 +361,17 @@ const submitEventDialog = () => {
   &__vTextArea {
     padding: 4px 20px;
     margin-top: 8px;
+  }
+
+  &__vSnackbar {
+    transform: scale(0.9);
+  }
+
+  &__snackbar {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 20px;
   }
 }
 </style>
