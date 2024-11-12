@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, useCssModule, watch } from 'vue'
+import type { EventItemType } from '../utils/types/event'
 import CalenderItem from './CalenderItem.vue'
 import { getFirstDate, getLastDate, getFirstSunday, getItemQuantity } from '../utils/date'
 
 interface Props {
   year: number
   monthIndex: number
+  eventList: EventItemType[]
 }
 
-const { year, monthIndex } = defineProps<Props>()
+const { year, monthIndex, eventList } = defineProps<Props>()
+const emit = defineEmits(['calenderItemOnClick', 'calenderItemOnFocused'])
 
 const $style = useCssModule()
 
@@ -48,42 +51,31 @@ const calenderItemListBase = computed(() => {
   })
 })
 
-const eventList = ref<any>([])
 // カレンダーにイベントやフォーカスの情報を追加
 const calenderItemList = computed(() => {
-  return calenderItemListBase.value.map((item) => {
-    const filteredEventList = eventList.value.filter((event: any) => {
-      return (
-        item.date.toDateString() ===
-        new Date(event.year, event.monthIndex, event.dating).toDateString()
-      )
+  if (calenderItemListBase.value) {
+    return calenderItemListBase.value.map((item) => {
+      const filteredEventList = eventList.filter((eventItem: any) => {
+        return item.date.toDateString() === new Date(eventItem.startDate).toDateString()
+      })
+      return {
+        ...item,
+        eventList: filteredEventList,
+        isFocused: item.key === focusedItem.value
+      }
     })
-    return {
-      ...item,
-      eventList: filteredEventList,
-      isFocused: item.key === focusedItem.value
-    }
-  })
-})
-
-const getEventList = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/calenderEventList')
-    if (!response.ok) {
-      throw new Error(`レスポンスステータス: ${response.status}`)
-    }
-    const json = await response.json()
-    eventList.value = JSON.parse(json)
-  } catch (error) {
-    console.error(error)
+  } else {
+    return []
   }
-}
+})
 
 const focusedItem = ref<number | undefined>()
 const setFocusedItem = () => {
-  const today = new Date()
-  if (today.getFullYear() === year && today.getMonth() === monthIndex) {
-    focusedItem.value = today.getDate() - 1
+  const todayIndex = calenderItemListBase.value.findIndex((item) => {
+    return item.isToday
+  })
+  if (todayIndex) {
+    focusedItem.value = todayIndex
   } else {
     focusedItem.value = getFirstDate(year, monthIndex).getDay()
   }
@@ -93,15 +85,12 @@ watch(() => [year, monthIndex], setFocusedItem)
 
 const calenderItemOnClick = (item: any) => {
   if (item.isFocused) {
-    console.log('focused')
+    emit('calenderItemOnClick', item)
   } else {
+    emit('calenderItemOnFocused', item)
     focusedItem.value = item.key
   }
 }
-
-;(async () => {
-  await getEventList()
-})()
 
 onMounted(() => {
   setFocusedItem()
@@ -146,6 +135,7 @@ onMounted(() => {
   }
 
   &__calenderItemWrap {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(7, calc(100% / 7));
     grid-template-rows: repeat(
