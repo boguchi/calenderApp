@@ -56,3 +56,27 @@ export const getItemQuantity = (year: number, monthIndex: number) => {
     86400000
   return quantity !== quantity ? 0 : quantity
 }
+
+/**
+ * 引数に応じた曜日を返す
+ * @param index - Date.getDay()の返り値
+ * @returns 引数に応じた曜日
+ */
+export const getDayString = (index: number) => {
+  switch (index) {
+    case (index = 0):
+      return '日'
+    case (index = 1):
+      return '月'
+    case (index = 2):
+      return '火'
+    case (index = 3):
+      return '水'
+    case (index = 4):
+      return '木'
+    case (index = 5):
+      return '金'
+    case (index = 6):
+      return '土'
+  }
+}
