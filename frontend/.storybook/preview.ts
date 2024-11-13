@@ -7,6 +7,16 @@ import { createPinia } from 'pinia'
 
 import 'ress'
 
+import { setupWorker } from 'msw';
+import { handlers } from './mocks/handlers';
+
+const worker = setupWorker(...handlers);
+worker.start({
+  serviceWorker: {
+    url: '/calenderApp/mockServiceWorker.js',
+  },
+});
+
 initialize()
 
 setup((app) => {
