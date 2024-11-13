@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/vue3'
-import { initialize, mswLoader } from 'msw-storybook-addon'
+import { initialize, mswDecorator, mswLoader } from 'msw-storybook-addon'
 import { setup } from '@storybook/vue3'
 import { withVuetifyTheme } from './withVeutifyTheme.decorator'
 import vuetify from '../plugins/vuetify'
@@ -7,14 +7,10 @@ import { createPinia } from 'pinia'
 
 import 'ress'
 
-initialize()
-
 setup((app) => {
   app.use(createPinia())
   app.use(vuetify)
 })
-
-export const decorators = [withVuetifyTheme]
 
 const preview: Preview = {
   parameters: {
@@ -30,3 +26,15 @@ const preview: Preview = {
 }
 
 export default preview
+
+export const decorators = [withVuetifyTheme, mswDecorator]
+
+const options =
+  location.hostname !== 'boguchi.github.io'
+    ? {}
+    : {
+        serviceWorker: {
+          url: '/calenderApp/mockServiceWorker.js'
+        }
+      }
+initialize()
