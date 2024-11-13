@@ -37,4 +37,4 @@ const options =
           url: '/calenderApp/mockServiceWorker.js'
         }
       }
-initialize()
+initialize(options)
