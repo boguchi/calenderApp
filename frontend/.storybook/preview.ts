@@ -6,6 +6,8 @@ import vuetify from '../plugins/vuetify'
 import { createPinia } from 'pinia'
 
 import 'ress'
+import '../src/assets/main.css'
+import '../src/assets/base.css'
 
 setup((app) => {
   app.use(createPinia())
