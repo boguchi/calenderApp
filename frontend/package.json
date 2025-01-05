@@ -13,7 +13,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test-storybook": "test-storybook"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -27,11 +28,12 @@
     "@chromatic-com/storybook": "^1.9.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@storybook/addon-essentials": "^8.2.9",
-    "@storybook/addon-interactions": "^8.2.9",
+    "@storybook/addon-interactions": "^8.4.7",
     "@storybook/addon-links": "^8.2.9",
     "@storybook/addon-onboarding": "^8.2.9",
     "@storybook/blocks": "^8.2.9",
-    "@storybook/test": "^8.2.9",
+    "@storybook/test": "^8.4.7",
+    "@storybook/test-runner": "^0.21.0",
     "@storybook/vue3": "^8.2.9",
     "@storybook/vue3-vite": "^8.2.9",
     "@tsconfig/node20": "^20.1.4",
