@@ -1,12 +1,37 @@
-import { ref } from 'vue'
 import { type Meta, type StoryObj } from '@storybook/vue3'
-import { userEvent, within } from '@storybook/test'
+import { expect, userEvent, waitFor, within, screen } from '@storybook/test'
 import CreateEventDialog from './CreateEventDialog.vue'
 import { mockEventList } from '../mock/eventList'
 
 const meta: Meta<typeof CreateEventDialog> = {
   title: 'Components/CreateEventDialog',
-  component: CreateEventDialog
+  component: CreateEventDialog,
+  render: (args) => ({
+    setup() {
+      return { args }
+    },
+    components: { CreateEventDialog },
+    template: `
+    <CreateEventDialog>
+      open dialog
+    </CreateEventDialog>
+    `
+  })
+}
+
+const playTemplate = (expectText: string) => {
+  return async ({ canvasElement }: any) => {
+    const canvas = within(canvasElement)
+    const trigger = canvas.getByText('open dialog')
+
+    waitFor(async () => {
+      await userEvent.click(trigger)
+      const bottomSheet = screen.getByRole('dialog')
+      const element = bottomSheet.getElementsByClassName('v-toolbar-title__placeholder')[0]
+        .innerHTML
+      expect(element).toMatch(expectText)
+    })
+  }
 }
 
 export default meta
@@ -14,47 +39,11 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: (args) => ({
-    setup() {
-      const selectedValue = ref()
-      return { args, selectedValue }
-    },
-    components: { CreateEventDialog },
-    template: `
-    <CreateEventDialog v-model="selectedValue">
-      open dialog
-    </CreateEventDialog>
-    `
-  }),
-  args: {
-    event: mockEventList[0]
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const trigger = canvas.getByText('open dialog')
-    await userEvent.click(trigger)
-  }
+  args: { event: mockEventList[0] },
+  play: playTemplate('編集')
 }
 
 export const 新規作成: Story = {
-  render: (args) => ({
-    setup() {
-      const selectedValue = ref()
-      return { args, selectedValue }
-    },
-    components: { CreateEventDialog },
-    template: `
-    <CreateEventDialog v-model="selectedValue">
-      open dialog
-    </CreateEventDialog>
-    `
-  }),
-  args: {
-    newEventDate: new Date()
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const trigger = canvas.getByText('open dialog')
-    await userEvent.click(trigger)
-  }
+  args: { newEventDate: new Date() },
+  play: playTemplate('追加')
 }
